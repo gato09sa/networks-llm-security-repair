@@ -1,0 +1,9 @@
+vuln_id,repo_url,fix_commit
+CVE-2021-32839,https://github.com/andialbrecht/sqlparse,8238a9e450ed1524e40cb3a8b0b3c00606903aeb
+CVE-2023-26145,https://github.com/dgilland/pydash,6ff0831ad285fff937cafd2a853f20cc9ae92021
+CVE-2023-30608,https://github.com/andialbrecht/sqlparse,c457abd5f097dd13fb21543381e7cfafe7d31cfb
+CVE-2024-53861,https://github.com/jpadilla/pyjwt,33022c25525c1020869c71ce2a4109e44ae4ced1
+CVE-2025-1944,https://github.com/mmaitre314/picklescan,e58e45e0d9e091159c1554f9b04828bbb40b9781
+CVE-2025-24359,https://github.com/lmfit/asteval,45bb47533f7abb5479618ae7f6a809215700dcb2
+CVE-2025-43859,https://github.com/python-hyper/h11,114803a29ce50116dc47951c690ad4892b1a36ed
+CVE-2025-46656,https://github.com/matthewwithanm/python-markdownify,959561879693bf4a576f99c6733b50b01186aa08
