@@ -1,0 +1,9 @@
+vuln_id	status	message
+CVE-2021-32839	OK	/home/ec2-user/networks-llm-security-repair/vul4py/workspaces/CVE-2021-32839/meta.json
+CVE-2023-26145	OK	/home/ec2-user/networks-llm-security-repair/vul4py/workspaces/CVE-2023-26145/meta.json
+CVE-2023-30608	OK	/home/ec2-user/networks-llm-security-repair/vul4py/workspaces/CVE-2023-30608/meta.json
+CVE-2024-53861	OK	/home/ec2-user/networks-llm-security-repair/vul4py/workspaces/CVE-2024-53861/meta.json
+CVE-2025-1944	OK	/home/ec2-user/networks-llm-security-repair/vul4py/workspaces/CVE-2025-1944/meta.json
+CVE-2025-24359	OK	/home/ec2-user/networks-llm-security-repair/vul4py/workspaces/CVE-2025-24359/meta.json
+CVE-2025-43859	OK	/home/ec2-user/networks-llm-security-repair/vul4py/workspaces/CVE-2025-43859/meta.json
+CVE-2025-46656	OK	/home/ec2-user/networks-llm-security-repair/vul4py/workspaces/CVE-2025-46656/meta.json

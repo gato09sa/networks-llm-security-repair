@@ -1,0 +1,9 @@
+cve_id	status	verdict_src	func_vuln_rc	func_fixed_rc	exploit_vuln_rc	exploit_fixed_rc	fv_pfes	ff_pfes	ev_pfes	ef_pfes
+CVE-2021-32839	OK	struct+struct+struct+struct	0	0	1	0	415/0/0/3	416/0/0/3	58/1/0/2	59/0/0/2
+CVE-2023-26145	INFRA_BROKEN	rc+rc+rc+rc	4	4	4	4	-	-	-	-
+CVE-2023-30608	OK	struct+struct+struct+struct	0	0	1	0	427/0/0/3	427/0/0/3	28/1/0/0	29/0/0/0
+CVE-2024-53861	OK	struct+struct+struct+struct	0	0	1	0	175/0/0/115	176/0/0/115	70/1/0/2	71/0/0/2
+CVE-2025-1944	UNEXPECTED	struct+struct+struct+struct	2	2	2	2	0/0/1/0	0/0/1/0	0/0/1/0	0/0/1/0
+CVE-2025-24359	INFRA_BROKEN	rc+rc+rc+rc	4	4	4	4	-	-	-	-
+CVE-2025-43859	OK	struct+struct+struct+struct	0	0	1	0	78/0/0/0	78/0/0/0	16/1/0/0	17/0/0/0
+CVE-2025-46656	OK	struct+struct+struct+struct	0	0	1	0	75/0/0/0	75/0/0/0	44/1/0/0	45/0/0/0
