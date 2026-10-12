@@ -117,24 +117,48 @@ excluded from VRR and FAR. If there are no positive claims, FAR is reported as
 
 ## Preliminary results
 
-<!-- Fill in from results/metrics.txt and results/case_status.txt after the run. Do not edit by hand. -->
+MVP run on 2026-10-12 with **one** Vul4Py case (as requested for this
+delivery). Values come from `results/results.csv` and `results/metrics.txt`.
 
 | Case | Project | Status |
 |---|---|---|
-| CVE-2021-32839 | sqlparse | _pending_ |
-| CVE-2023-30608 | sqlparse | _pending_ |
-| CVE-2024-53861 | pyjwt | _pending_ |
-| CVE-2025-43859 | h11 | _pending_ |
-| CVE-2025-46656 | markdownify | _pending_ |
-| CVE-2023-26145 | pydash | excluded: Vul4Py scan `INFRA_BROKEN` |
-| CVE-2025-24359 | asteval | excluded: Vul4Py scan `INFRA_BROKEN` |
-| CVE-2025-1944 | picklescan | excluded: Vul4Py scan `UNEXPECTED` |
+| CVE-2021-32839 | sqlparse (ReDoS / deep recursion) | **COMPLETE** |
+| CVE-2023-30608, CVE-2024-53861, CVE-2025-43859, CVE-2025-46656 | sqlparse, pyjwt, h11, markdownify | scan OK, not run in the MVP |
+| CVE-2023-26145, CVE-2025-24359, CVE-2025-1944 | pydash, asteval, picklescan | excluded: Vul4Py scan `INFRA_BROKEN` / `UNEXPECTED` |
 
-- **VRR** = _pending_
-- **FAR** = _pending_
+| case | C (claim) | P (confidence) | A (applied) | S | F | V | FA | latency | tokens in/out |
+|---|---|---|---|---|---|---|---|---|---|
+| CVE-2021-32839 | 1 | 0.88 | 0 | 0 | 0 | 0 | **1** | 33,877 ms | 57,190 / 3,618 |
+
+- **VRR** = 0/1 = **0%**
+- **FAR** = 1/1 = **100%**
+
+**Interpretation.** The model claimed a successful repair with confidence 0.88,
+but its `patch.diff` is not a valid unified diff: hunk headers are bare `@@`
+without line ranges, and it mixes in another format (`*** Update File: ...`).
+Both `git apply` and `patch` rejected it ("Only garbage was found in the patch
+input"), so `A = 0` and, by definition, `S = F = 0`. This is a false assurance
+case: the claim was not supported by an applicable patch. The idea behind the
+patch (limiting recursion depth in `sqlparse` grouping) targets the right area,
+but Vul4Py cannot test a patch that does not apply. With N = 1 these numbers are
+only a demonstration of the pipeline, not a statistical estimate.
+
+Before the run, the evaluator was validated on the same case with control
+patches (`tools/smoke_test_vul4py.py`): the official fix gave `A = S = F = 1`
+and an invalid patch gave `A = 0`.
+
+Semgrep (`--config=auto`) reported 0 findings on the vulnerable code; there is
+no "after" value because the patch did not apply. Zero findings does not mean
+the code is safe: Semgrep did not detect this CVE.
+
+**Network measurement.** HTTP `200`, HTTP/1.1, request id
+`req_082aba3a949b44548ccead09ae51177c`. Total latency 33,877 ms, of which the
+server reported 33,081 ms of processing (`openai-processing-ms`), so roughly
+0.8 s were spent outside the model: DNS, TCP and TLS setup, and sending the
+~226 KB request body.
 
 Per-case artifacts (`patch.diff`, `llm_response.json`, `eval.json`, `eval.log`,
-Semgrep reports) are in `results/cases/<case_id>/`.
+Semgrep report) are in `results/cases/<case_id>/`.
 
 ## What happens on the network
 
