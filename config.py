@@ -14,13 +14,12 @@ BENCHMARK_NAME = "vul4py"
 BENCHMARK_ROOT = PROJECT_ROOT / "vul4py"
 AGENT_NAME = "student"
 
-# Los cinco casos con estado OK en scan_report.tsv (ver results/vul4py_scan/)
+# Caso elegido para la prueba del MVP (uno de los casos de Vul4Py, estado OK en
+# scan_report.tsv). Se eligió porque el evaluador se validó con el fix oficial
+# (control positivo) y con un parche inválido (control negativo).
+# Otros casos OK disponibles: CVE-2023-30608, CVE-2024-53861, CVE-2025-43859, CVE-2025-46656
 CASE_IDS = [
     "CVE-2021-32839",  # sqlparse
-    "CVE-2023-30608",  # sqlparse
-    "CVE-2024-53861",  # pyjwt
-    "CVE-2025-43859",  # h11
-    "CVE-2025-46656",  # markdownify
 ]
 
 MAX_ATTEMPTS_PER_CASE = 1               # un único intento de reparación por caso
