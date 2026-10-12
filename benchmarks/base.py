@@ -11,6 +11,10 @@ from typing import Protocol
 from models import EvaluationResult
 
 
+class BenchmarkError(RuntimeError):
+    """Fallo de infraestructura del benchmark: NO es un fallo de reparación."""
+
+
 class BenchmarkAdapter(Protocol):
     def valid_cases(self) -> list[str]:
         """Devuelve los casos utilizables (en Vul4Py: estado OK en el scan)."""
