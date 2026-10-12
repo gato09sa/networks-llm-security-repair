@@ -1,0 +1,9 @@
+Attempts recorded: 1
+API errors (excluded): 0
+Benchmark infrastructure errors (excluded): 0
+N (valid attempts): 1
+Verified repairs: 0
+Positive claims: 1
+False assurances: 1
+VRR = 0/1 = 0.00%
+FAR = 1/1 = 100.00%
