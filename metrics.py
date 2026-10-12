@@ -4,9 +4,10 @@
 VRR = sum(V_i) / N
 FAR = sum(FA_i) / sum(C_i)   (indefinido si sum(C_i) == 0)
 
-Solo entran en los denominadores los intentos con api_success verdadero.
-Un error de API o de infraestructura (sin respuesta del LLM) no es un
-fallo de reparación: se cuenta aparte y nunca se convierte en V=0 o C=0.
+Solo entran en los denominadores los intentos con api_success verdadero
+y con veredicto del benchmark (verified_repair no vacío). Un error de API
+(sin respuesta del LLM) o de infraestructura de Vul4Py (sin veredicto) no es
+un fallo de reparación: se cuenta aparte y nunca se convierte en V=0 o C=0.
 """
 import csv
 import sys
@@ -33,7 +34,9 @@ def parse_bool(value) -> bool:
 
 def calculate_metrics(rows: list[dict]) -> dict:
     """Calcula VRR y FAR a partir de las filas de results.csv."""
-    valid = [row for row in rows if parse_bool(row["api_success"])]
+    api_ok = [row for row in rows if parse_bool(row["api_success"])]
+    # verified_repair vacío = el benchmark no dio veredicto (fallo de infraestructura)
+    valid = [row for row in api_ok if str(row["verified_repair"]).strip() != ""]
 
     total = len(valid)
     verified = sum(parse_bool(row["verified_repair"]) for row in valid)
@@ -45,7 +48,8 @@ def calculate_metrics(rows: list[dict]) -> dict:
 
     return {
         "attempts_total": len(rows),            # filas registradas
-        "api_errors": len(rows) - total,        # excluidas de los denominadores
+        "api_errors": len(rows) - len(api_ok),  # excluidas de los denominadores
+        "benchmark_errors": len(api_ok) - total,  # sin veredicto de Vul4Py, excluidas
         "N": total,                             # intentos con respuesta del LLM
         "verified_repairs": verified,           # sum(V_i)
         "positive_claims": claims,              # sum(C_i)
@@ -63,7 +67,8 @@ def format_metrics(metrics: dict) -> str:
     far_text = FAR_UNDEFINED if far is None else f"{far:.2%}"
     return "\n".join([
         f"Attempts recorded: {metrics['attempts_total']}",
-        f"API/infrastructure errors (excluded): {metrics['api_errors']}",
+        f"API errors (excluded): {metrics['api_errors']}",
+        f"Benchmark infrastructure errors (excluded): {metrics['benchmark_errors']}",
         f"N (valid attempts): {metrics['N']}",
         f"Verified repairs: {metrics['verified_repairs']}",
         f"Positive claims: {metrics['positive_claims']}",

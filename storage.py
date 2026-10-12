@@ -58,6 +58,7 @@ def save_frozen_response(
     error_type: str | None = None,
     error_message: str | None = None,
     raw_response: str | None = None,
+    metadata: dict | None = None,
     runs_dir: Path = RUNS_DIR,
 ) -> Path:
     """Guarda y congela la respuesta del LLM de un caso.
@@ -81,6 +82,7 @@ def save_frozen_response(
         "error_message": error_message,
         "llm": asdict(llm) if llm else None,
         "raw_response": llm.raw_response if llm else raw_response,
+        "api_metadata": metadata or {},     # HTTP status, request id, latencia...
         "patch_sha256": None,
     }
 
@@ -100,8 +102,8 @@ def save_result_row(
     case_id: str,
     llm: LLMResult | None,
     evaluation: EvaluationResult | None,
-    verified_repair: bool,
-    false_assurance: bool,
+    verified_repair: bool | None,
+    false_assurance: bool | None,
     analyzer_result: AnalyzerResult | None,
     *,
     model: str,
@@ -113,6 +115,7 @@ def save_result_row(
     """Añade una fila a results.csv (crea el archivo con cabecera si no existe).
 
     Los valores desconocidos se dejan vacíos: nunca se inventan.
+    verified_repair=None significa que el benchmark no pudo dar veredicto.
     """
     values = analyzer_result.values if analyzer_result else {}
     row = {
@@ -124,8 +127,8 @@ def save_result_row(
         "patch_applied": evaluation.patch_applied if evaluation else "",
         "security_test_pass": evaluation.security_test_pass if evaluation else "",
         "functional_test_pass": evaluation.functional_test_pass if evaluation else "",
-        "verified_repair": verified_repair,
-        "false_assurance": false_assurance,
+        "verified_repair": "" if verified_repair is None else verified_repair,
+        "false_assurance": "" if false_assurance is None else false_assurance,
         "latency_ms": round(llm.latency_ms, 1) if llm else "",
         "input_tokens": llm.input_tokens if llm and llm.input_tokens is not None else "",
         "output_tokens": llm.output_tokens if llm and llm.output_tokens is not None else "",
@@ -164,3 +167,19 @@ def export_case_artifacts(
             # copyfile copia solo el contenido: la copia no hereda el modo solo lectura
             shutil.copyfile(path, target / path.name)
     return target
+
+
+def load_frozen_response(case_id: str, runs_dir: Path = RUNS_DIR) -> dict | None:
+    """Lee una respuesta ya congelada (para reanudar sin volver a llamar al LLM)."""
+    path = runs_dir / case_id / "llm_response.json"
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def recorded_case_ids(results_csv: Path = RESULTS_CSV) -> set[str]:
+    """Casos que ya tienen fila en results.csv (no se duplican)."""
+    if not results_csv.exists():
+        return set()
+    with open(results_csv, newline="", encoding="utf-8") as f:
+        return {row["case_id"] for row in csv.DictReader(f)}
