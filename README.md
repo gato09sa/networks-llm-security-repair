@@ -80,6 +80,18 @@ python metrics.py                              # recompute VRR / FAR from result
 A case that already has a frozen response is never sent to the API again; a
 case that already has a row in `results.csv` is skipped.
 
+### Run a new case (any of the 100 Vul4Py cases)
+
+```bash
+source venv/bin/activate && source ~/.openai_env
+bash tools/prepare_case.sh CVE-XXXX-YYYY        # clone + scan, no API call
+python run_experiment.py --dry-run CVE-XXXX-YYYY # input size, no API call
+python run_experiment.py CVE-XXXX-YYYY          # ONE API request, then Vul4Py
+```
+
+If the scan status is not `OK`, the case is not sent to the LLM; document the
+status instead.
+
 ## How the OpenAI API is used
 
 - One `POST https://api.openai.com/v1/responses` per case, with the fixed

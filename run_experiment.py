@@ -167,12 +167,14 @@ def main() -> None:
 
     benchmark = Vul4PyAdapter(BENCHMARK_ROOT, RUNS_DIR)
     valid = benchmark.valid_cases()
-    selected = CASE_IDS if CASE_IDS is not None else valid
+    selected = list(CASE_IDS) if CASE_IDS is not None else list(valid)
+    # Casos indicados en la línea de comandos (p. ej. el que elija el profesor)
+    selected += [case_id for case_id in args.cases if case_id not in selected]
     case_ids = [case_id for case_id in selected if case_id in valid]
     if args.cases:
-        unknown = set(args.cases) - set(case_ids)
-        if unknown:
-            parser.error(f"casos no válidos o no asignados: {sorted(unknown)}")
+        invalid = [case_id for case_id in args.cases if case_id not in valid]
+        if invalid:
+            parser.error(f"casos sin estado OK en scan_report.tsv: {invalid}")
         case_ids = [case_id for case_id in case_ids if case_id in args.cases]
 
     if args.dry_run:
